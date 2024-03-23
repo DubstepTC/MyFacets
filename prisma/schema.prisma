@@ -10,5 +10,17 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://myfacets:myfacets@localhost:5432/myfacets?"
+}
+
+model Users {
+  id        String       @id @default(uuid()) @db.Uuid
+  email       String       @unique
+  password    String
+  hash       String   @map("password_hash")
+  first_name String
+  middle_name String
+  last_name  String
+  createdAt   DateTime     @default(now())
+  lastLogin   DateTime     @default(now())
 }
