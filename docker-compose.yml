@@ -1,0 +1,40 @@
+version: '3.5'
+
+services:
+  myfacets_postgres:
+    container_name: myfacets_postgres
+    image: postgres:14
+    environment:
+      POSTGRES_USER: myfacets
+      POSTGRES_PASSWORD: myfacets
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/C:/Users/User/Desktop/myfacets/docker-volumes/postgres
+    ports:
+      - 127.0.0.1:5432:5432
+    networks:
+      - myfacets
+    restart: unless-stopped
+
+  myfacets_pgadmin:
+    container_name: myfacets_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: myfacets@admin.com
+      PGADMIN_DEFAULT_PASSWORD: myfacets
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - postgres:/C:/Users/User/Desktop/myfacets/docker-volumes/pgadmin
+    ports:
+      - 127.0.0.1:5050:80
+    networks:
+      - myfacets
+    restart: unless-stopped
+
+networks:
+  myfacets:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
