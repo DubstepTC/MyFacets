@@ -23,4 +23,7 @@ model Users {
   last_name  String
   createdAt   DateTime     @default(now())
   lastLogin   DateTime     @default(now())
+
+  @@map("users")
 }
+
