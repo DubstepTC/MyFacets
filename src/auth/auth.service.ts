@@ -1,44 +1,91 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../entities/user/users.service';
+import {
+  BadRequestException,
+  Injectable,
+} from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service';
+import { ItemAuthDto } from './dto/items/itemAuth.dto';
+import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from "bcrypt";
+import { jwtSecret } from 'src/utils/constants';
+import AuthServiceInterface from './interface/authService.interface';
+import { SignupParamsDto } from './dto/signup/signup.dto';
+import { SigninParamsDto } from './dto/signin/signIn.dto';
 
 @Injectable()
-export class AuthService {
-    constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService
-      ) {}
+export class AuthService implements AuthServiceInterface{
+  constructor(private prisma: PrismaService, private jwt: JwtService) {}
 
-      async signIn(
-        username: string,
-        pass: string,
-      ): Promise<{ access_token: string }> {
-        const user = await this.usersService.findOne(username);
-        if (user?.password !== pass) {
-          throw new UnauthorizedException();
-        }
-        const payload = { sub: user.userId, username: user.username };
-        return {
-          access_token: await this.jwtService.signAsync(payload),
-        };
+  async signup(dto: SignupParamsDto): Promise<ItemAuthDto> {
+    const { email, first_name, middle_name, last_name, password } = dto;
+    try {
+      const userExists = await this.prisma.user.findUnique({
+        where: { email },
+      });
+  
+      if (userExists) throw new BadRequestException('Email already exists');
+  
+      const hashedPassword = await this.hashPassword(password);
+  
+      const result: ItemAuthDto = await this.prisma.user.create({
+        data: {
+          email,
+          first_name,
+          middle_name,
+          last_name,
+          password,
+        },
+      });
+
+      if (!result) throw new BadRequestException();
+      return result;
+
+    } catch (err) {
+      throw new BadRequestException(err.response);
     }
-//попытка регистрации
-    async createUser(
-      email: string,
-      password: string
-    ) {
-      const lowerCaseEmail = email.toLowerCase();
-      const hashedPassword = await bcrypt.hash(
-        password, 10
-      );
-    //  const user = this.prisma.mutation.createUser(
-    //    {
-    //      data: {
-    //        email: lowerCaseEmail,
-    //        password: hashedPassword
-    //      }
-    //    }
-    //  );
-}}
+  }
 
+  async signin(dto: SigninParamsDto): Promise<ItemAuthDto> {
+    const { email, password } = dto;
+
+    const foundUser: ItemAuthDto = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!foundUser) throw new BadRequestException('Wrong credentials (email)');
+
+    const compareSuccess = await this.comparePasswords({
+      password,
+      hash: foundUser.password,
+    });
+
+    if (!compareSuccess) throw new BadRequestException('Wrong credentials (password)');
+
+    return foundUser;
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    const saltOrRounds = 10;
+
+    return await bcrypt.hash(password, saltOrRounds);
+  }
+
+  async comparePasswords(args: { hash: string; password: string }): Promise<string> {
+    const booleanToSting: boolean = await bcrypt.compare(args.password, args.hash);
+    return booleanToSting.toString(); 
+}
+
+  async signToken(args: { userId: string; email: string }): Promise<string> {
+    const payload = {
+      id: args.userId,
+      email: args.email,
+    };
+
+    const token = await this.jwt.signAsync(payload, {
+      secret: jwtSecret,
+    });
+    
+    return token;
+  }
+}
