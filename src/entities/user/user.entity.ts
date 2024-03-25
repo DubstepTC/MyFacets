@@ -8,16 +8,16 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number
 
-  @Column({ name: 'email', type: 'varchar' })
+  @Column({ name: 'email', type: 'varchar', nullable: true})
   email: string
 
-  @Column({ name: 'password', type: 'varchar' })
+  @Column({ name: 'password', type: 'varchar', nullable: true })
   password: string
 
-  @Column({ name: 'name_first', type: 'varchar' })
+  @Column({ name: 'name_first', type: 'varchar', nullable: true })
   nameFirst: string
 
-  @Column({ name: 'name_last', type: 'varchar' })
+  @Column({ name: 'name_last', type: 'varchar', nullable: true })
   nameLast: string
 
   @Column({ name: 'birth_date', type: 'timestamp', nullable: true })
