@@ -17,7 +17,7 @@ export class AuthService implements AuthServiceInterface {
   async signup(dto: SignupParamsDto): Promise<ItemAuthDto> {
     const { email, first_name, middle_name, last_name, password } = dto;
     try {
-      const userExists = await this.prisma.users.findUnique({
+      const userExists = await this.prisma.user.findUnique({
         where: { email },
       });
 
@@ -25,7 +25,7 @@ export class AuthService implements AuthServiceInterface {
 
       const hashedPassword = await this.hashPassword(password);
 
-      const result = await this.prisma.users.create({
+      const result = await this.prisma.user.create({
         data: {
           email: email,
           first_name: first_name,
@@ -45,7 +45,7 @@ export class AuthService implements AuthServiceInterface {
   async signin(dto: SigninParamsDto) {
     const { email, password } = dto;
 
-    const foundUser = await this.prisma.users.findUnique({
+    const foundUser = await this.prisma.user.findUnique({
       where: {
         email,
       },

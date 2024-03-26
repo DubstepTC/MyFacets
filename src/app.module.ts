@@ -12,7 +12,7 @@ import { AuthModule } from './auth/auth.module';
       global: true,
     }),
     PrismaModule.forRoot({
-      isGlobal: true,
+      isGlobal: true
     }),
   ],
 })
