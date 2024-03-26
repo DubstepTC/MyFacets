@@ -13,17 +13,14 @@ datasource db {
   url      = "postgresql://myfacets:myfacets@localhost:5432/myfacets?"
 }
 
-model Users {
+model User {
   id        String       @id @default(uuid()) @db.Uuid
   email       String       @unique
   password    String
-  hash       String   @map("password_hash")
   first_name String
   middle_name String
   last_name  String
-  createdAt   DateTime     @default(now())
-  lastLogin   DateTime     @default(now())
-
-  @@map("users")
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt()
 }
 

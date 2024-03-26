@@ -1,21 +1,48 @@
-import {  Body, Controller, Get, HttpCode, HttpStatus, Post,
-    Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Req, Res} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './auth.guard';
+import { SignupParamsDto } from './dto/signup/signup.dto';
+import { Response } from 'express';
+import AuthControllerInterface from './interface/authController.interface';
+import { AuthControllerDto } from './dto/authController.dto';
+import { SigninParamsDto } from './dto/signin/signIn.dto';
 
-@Controller('auth')
-export class AuthController {
+@Controller({
+  path: 'auth',
+  version: '1'
+})
+export class AuthController implements AuthControllerInterface {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
-  @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  @Post('signup')
+  async signup(@Body() dto: SignupParamsDto, @Res() res: Response): Promise<Response<AuthControllerDto>> {
+    const result = await this.authService.signup(dto);
+    return res.status(200).send({
+      message: 'User created succefully',
+      data: result
+    });
   }
 
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @Post('signin')
+  async signin(@Res() res: Response, @Body() dto: SigninParamsDto): Promise<Response<AuthControllerDto>> {
+    const result = await this.authService.signin(dto);
+   
+    const token = await this.authService.signToken({
+      userId: result.id,
+      email: result.email,
+    });
+
+    if (!token) throw new ForbiddenException('Could not signin');
+
+    res.cookie('token', token, {});
+    return res.status(200).send({
+      message: 'Logged in succefully',
+      data: result
+    })
+  }
+
+  @Get('signout')
+  async signout(@Res() res: Response): Promise<Response>{
+    res.clearCookie('token');
+    return res.status(200).send({ message: 'Logged out succefully' });
   }
 }
