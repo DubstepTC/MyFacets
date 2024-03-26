@@ -1,14 +1,19 @@
 import { Module } from '@nestjs/common';
-
-import { ConfigModule } from './config.module';
-import { TypeOrmModule } from './db/typeorm.module';
-import { UserModule } from './entities/user/user.module'
+import { JwtModule } from '@nestjs/jwt';
+import { PrismaModule } from 'nestjs-prisma';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule,
-    ConfigModule,
-    UserModule
+    AuthModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '7d' },
+      global: true,
+    }),
+    PrismaModule.forRoot({
+      isGlobal: true,
+    }),
   ],
 })
 export class AppModule {}
