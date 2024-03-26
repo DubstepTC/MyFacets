@@ -14,6 +14,7 @@ datasource db {
 }
 
 model User {
+  
   id        String       @id @default(uuid()) @db.Uuid
   email       String       @unique
   password    String
@@ -22,5 +23,6 @@ model User {
   last_name  String
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt()
+
 }
 
