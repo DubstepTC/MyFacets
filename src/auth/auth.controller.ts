@@ -5,6 +5,7 @@ import { Response } from 'express';
 import AuthControllerInterface from './interface/authController.interface';
 import { AuthControllerDto } from './dto/authController.dto';
 import { SigninParamsDto } from './dto/signing/signing';
+import { PasswordLessParamsDto } from './dto/passwordless/passwordless';
 
 @Controller({
   path: 'auth',
@@ -44,5 +45,16 @@ export class AuthController implements AuthControllerInterface {
   async signout(@Res() res: Response): Promise<Response>{
     res.clearCookie('token');
     return res.status(200).send({ message: 'Logged out succefully' });
+  }
+
+  @Post('passwordLess')
+  async passwordLess(@Body() dto: PasswordLessParamsDto, @Res() res: Response): Promise<Response<AuthControllerDto>> {
+    const token = await this.authService.passwordLess(dto);
+
+    return res.json({
+      success: true,
+      message: "На вашей почте скоро появится письмо для сброса пароля",
+      token,
+    });
   }
 }
