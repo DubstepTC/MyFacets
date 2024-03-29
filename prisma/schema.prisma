@@ -11,7 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = "postgresql://myfacets:myfacets@localhost:5432/myfacets?"
-}
+}  
 
 enum GENDER {
   MALE

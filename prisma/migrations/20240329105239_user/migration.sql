@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "GENDER" AS ENUM ('MALE', 'FEMALE');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
