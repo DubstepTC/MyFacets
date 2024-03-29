@@ -30,3 +30,9 @@ model User {
   birthday    DateTime
   gender      GENDER
 }
+model Review {
+  id          String   @id @default(uuid())
+  author      String     
+  text        String
+  createdAt   DateTime @default(now())
+}
