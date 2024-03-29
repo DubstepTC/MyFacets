@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://myfacets:myfacets@localhost:5432/myfacets?"
 }
 
 enum GENDER {
@@ -27,6 +27,4 @@ model User {
   last_name   String
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt()
-  birthday    DateTime
-  gender      GENDER
 }
