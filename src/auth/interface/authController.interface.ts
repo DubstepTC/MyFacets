@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { SignupParamsDto } from "../dto/signup/signup.dto";
 import { AuthControllerDto } from "../dto/authController.dto";
-import { SigninParamsDto } from "../dto/signin/signIn.dto";
+import { SigninParamsDto } from "../dto/signing/signing";
 
 export default interface AuthControllerInterface {
   signup(dto: SignupParamsDto, res: Response): Promise<Response<AuthControllerDto>>;

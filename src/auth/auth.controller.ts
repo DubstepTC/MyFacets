@@ -4,7 +4,7 @@ import { SignupParamsDto } from './dto/signup/signup.dto';
 import { Response } from 'express';
 import AuthControllerInterface from './interface/authController.interface';
 import { AuthControllerDto } from './dto/authController.dto';
-import { SigninParamsDto } from './dto/signin/signIn.dto';
+import { SigninParamsDto } from './dto/signing/signing';
 
 @Controller({
   path: 'auth',

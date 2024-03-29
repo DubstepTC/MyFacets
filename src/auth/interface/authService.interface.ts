@@ -1,5 +1,5 @@
 import { SignupParamsDto } from '../dto/signup/signup.dto';
-import { SigninParamsDto } from '../dto/signin/signIn.dto';
+import { SigninParamsDto } from '../dto/signing/signing';
 import { ItemAuthDto } from '../dto/items/itemAuth.dto';
 
 export default interface AuthServiceInterface {

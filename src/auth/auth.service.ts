@@ -4,7 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import AuthServiceInterface from './interface/authService.interface';
 import { SignupParamsDto } from './dto/signup/signup.dto';
-import { SigninParamsDto } from './dto/signin/signIn.dto';
+import { SigninParamsDto } from './dto/signing/signing';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
