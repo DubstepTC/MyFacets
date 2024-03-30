@@ -1,53 +1,53 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, ForbiddenException, Param, Delete, ParseIntPipe, Res} from '@nestjs/common';
 import { ReviewsService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse} from '@nestjs/swagger';
 import { ReviewEntity } from './entity/review.entity';
+import ReviewControllerInterface from './dto/reviewController.interface';
+import { ReviewControllerDto } from './dto/reviewController.dto';
+import { Response } from 'express';
 
 @Controller('review')
-export class ReviewController {
-  constructor(private readonly reviewService: ReviewsService) {}
+export class ReviewController implements ReviewControllerInterface {
+  constructor(private reviewService: ReviewsService) {}
 
   @Post('create')
-  @ApiCreatedResponse({ type: ReviewEntity })
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewService.create(createReviewDto);
+  async create(@Body() createReviewDto: CreateReviewDto, @Res() res: Response) : Promise<Response<ReviewControllerDto>> {
+    const result = await this.reviewService.create(createReviewDto);
+    return res.status(200).send({
+      message: 'Review created succefully',
+      data: result
+    });
   }
 
   @Get('findAll')
   @ApiOkResponse({ type: ReviewEntity, isArray: true })
-  findAll() {
-    return this.reviewService.findAll();
+  async findAll(@Res() res: Response) {
+    const result = await this.reviewService.findAll();
+    return res.status(200).send({
+      message: 'Reviews found succefully',
+      data: result
+    });
   }
 
   @Get(':id')
   @ApiOkResponse({ type: ReviewEntity })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const result = await this.reviewService.findOne(id);
+    return res.status(200).send({
+      message: 'Review found succefully',
+      data: result
+    });
     return this.reviewService.findOne(id);
-  }
-
-  @Patch(':id')
-  @ApiCreatedResponse({ type: ReviewEntity })
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateReviewDto: UpdateReviewDto,
-  ) {
-    return this.reviewService.update(id, updateReviewDto);
   }
 
   @Delete(':id')
   @ApiOkResponse({ type: ReviewEntity })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.reviewService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const result = await this.reviewService.remove(id);
+    return res.status(200).send({
+      message: 'Review deleted succefully',
+      data: result
+    });
   }
 }

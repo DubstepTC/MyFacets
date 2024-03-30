@@ -8,10 +8,8 @@ import {
 } from 'class-validator';
 
 export class CreateReviewDto {
-  @IsString()
   @IsNotEmpty()
-  @ApiProperty()
-  author: string;
+  authorId: number;
 
   @IsString()
   @IsOptional()

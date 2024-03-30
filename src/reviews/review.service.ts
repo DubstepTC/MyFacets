@@ -1,32 +1,57 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+import ReviewServiceInterface from './dto/reviewService.interface';
+import { ItemReviewDto } from './dto/itemReview.dto';
+import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
-export class ReviewsService {
-  constructor(private prisma: PrismaService) {}
+export class ReviewsService implements ReviewServiceInterface {
+  constructor(
+    private prisma: PrismaService
+  ) { }
+  async create(dto: CreateReviewDto): Promise<ItemReviewDto> {
+    const { authorId, text } = dto;
+    try {
+      const result = await this.prisma.review.create({
+        data: {
+          authorId: authorId,
+          text: text
+        }
+      });
+      if (!result) throw new BadRequestException();
+      return result;
+    } catch (err) {
+      throw new BadRequestException(err.response);
+    }
+  };
 
-  create(createReviewDto: CreateReviewDto) {
-    return this.prisma.reviews.create({ data: createReviewDto });
+  async findAll() {
+    try {
+      const result = this.prisma.review.findMany({});
+      if (!result) throw new BadRequestException();
+      return result;
+    } catch (err) {
+      throw new BadRequestException(err.response);
+    }
   }
 
-  findAll() {
-    return this.prisma.reviews.findMany({});
+  async findOne(id: number) {
+    try {
+      const result = this.prisma.review.findUnique({ where: { id } }); 
+      if (!result) throw new BadRequestException();
+      return result;
+    } catch (err) {
+      throw new BadRequestException(err.response);
+    }
   }
 
-  findOne(id: number) {
-    return this.prisma.reviews.findUnique({ where: { id } });
-  }
-
-  update(id: number, updateReviewDto: UpdateReviewDto) {
-    return this.prisma.reviews.update({
-      where: { id },
-      data: updateReviewDto,
-    });
-  }
-
-  remove(id: number) {
-    return this.prisma.reviews.delete({ where: { id } });
+  async remove(id: number) {
+    try {
+      const result = this.prisma.review.delete({ where: { id } });
+      if (!result) throw new BadRequestException();
+      return result;
+    } catch (err) {
+      throw new BadRequestException(err.response);
+    }
   }
 }
