@@ -4,7 +4,7 @@ export class ItemAuthDto {
   @IsString()
   @IsUUID()
   @IsNotEmpty()
-  id: string;
+  id: number;
 
   @IsString()
   @IsEmail()

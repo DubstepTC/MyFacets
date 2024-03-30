@@ -13,13 +13,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum GENDER {
-  MALE
-  FEMALE
-}
-
 model User {
-  id          String   @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   email       String   @unique
   password    String
   first_name  String
@@ -27,12 +22,12 @@ model User {
   last_name   String
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt()
-  birthday    DateTime
-  gender      GENDER
+  reviews     Review[]
 }
 model Review {
-  id          String   @id @default(uuid())
-  author      String     
+  id          Int      @id @default(autoincrement())
+  author      User      @relation(fields: [authorId], references: [id]) 
+  authorId    Int
   text        String
   createdAt   DateTime @default(now())
 }

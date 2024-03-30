@@ -81,7 +81,7 @@ export class AuthService implements AuthServiceInterface {
     return booleanToSting.toString();
   }
 
-  async signToken(args: { userId: string; email: string }): Promise<string> {
+  async signToken(args: { userId: number; email: string }): Promise<string> {
     const payload = {
       id: args.userId,
       email: args.email,

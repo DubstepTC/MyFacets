@@ -7,5 +7,5 @@ export default interface AuthServiceInterface {
   signin(dto: SigninParamsDto): Promise<ItemAuthDto>;
   hashPassword(password: string): Promise<string>;
   comparePasswords(args: { hash: string; password: string }): Promise<string>;
-  signToken(args: { userId: string; email: string }): Promise<string>;
+  signToken(args: { userId: number; email: string }): Promise<string>;
 }
