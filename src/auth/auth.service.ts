@@ -121,7 +121,7 @@ export class AuthService implements AuthServiceInterface {
 
     const mailOptions = {
       to: user.email,
-      from: 'no-reply@example.com',
+      from: 'myfacets@mail.ru',
       subject: 'Reset password',
       text: `Please click the link below to reset your password:\n\n${resetPasswordUrl}`,
     };

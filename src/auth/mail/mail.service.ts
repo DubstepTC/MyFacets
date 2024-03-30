@@ -7,10 +7,10 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
+      service: 'mail.ru',
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
+        user: 'myfacets@mail.ru',
+        pass: 'pFnBGAkmFchHs8XKfxx3',
       },
     });
   }
