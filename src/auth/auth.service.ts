@@ -12,7 +12,7 @@ export class AuthService implements AuthServiceInterface {
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
-  ) {}
+  ) { }
 
   async signup(dto: SignupParamsDto): Promise<ItemAuthDto> {
     const { email, first_name, middle_name, last_name, password } = dto;
@@ -45,23 +45,27 @@ export class AuthService implements AuthServiceInterface {
   async signin(dto: SigninParamsDto) {
     const { email, password } = dto;
 
-    const foundUser = await this.prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
+    try {
+      const foundUser = await this.prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
 
-    if (!foundUser) throw new BadRequestException('Wrong credentials (email)');
+      if (!foundUser) throw new BadRequestException('Wrong credentials (email)');
 
-    const compareSuccess = await this.comparePasswords({
-      password,
-      hash: foundUser.password,
-    });
+      const compareSuccess = await this.comparePasswords({
+        password,
+        hash: foundUser.password,
+      });
 
-    if (!compareSuccess)
-      throw new BadRequestException('Wrong credentials (password)');
+      if (!compareSuccess)
+        throw new BadRequestException('Wrong credentials (password)');
 
-    return foundUser;
+      return foundUser;
+    } catch (err) {
+      throw new BadRequestException(err.response);
+    }
   }
 
   async hashPassword(password: string): Promise<string> {
@@ -81,7 +85,7 @@ export class AuthService implements AuthServiceInterface {
     return booleanToSting.toString();
   }
 
-  async signToken(args: { userId: string; email: string }): Promise<string> {
+  async signToken(args: { userId: number; email: string }): Promise<string> {
     const payload = {
       id: args.userId,
       email: args.email,

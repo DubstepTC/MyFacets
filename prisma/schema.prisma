@@ -13,13 +13,8 @@ datasource db {
   url      = "postgresql://myfacets:myfacets@localhost:5432/myfacets?"
 }
 
-enum GENDER {
-  MALE
-  FEMALE
-}
-
 model User {
-  id          String   @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   email       String   @unique
   password    String
   first_name  String
@@ -27,4 +22,12 @@ model User {
   last_name   String
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt()
+  reviews     Review[]
+}
+model Review {
+  id          Int      @id @default(autoincrement())
+  author      User      @relation(fields: [authorId], references: [id]) 
+  authorId    Int
+  text        String
+  createdAt   DateTime @default(now())
 }
