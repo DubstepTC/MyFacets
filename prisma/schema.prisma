@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://myfacets:myfacets@localhost:5432/myfacets?"
+  url      = "postgresql://postgres:admin@localhost:5432/myfacets?"
 }
 
 enum GENDER {
@@ -27,4 +27,30 @@ model User {
   last_name   String
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt()
+  answers     UserAnswer[]
 }
+
+model Question {
+  id          Int @id
+  text        String
+  answers     Answer[]
+}
+
+model Answer {
+  id         Int @id
+  text       String
+  question   Question @relation(fields: [queston_id], references: [id])
+  queston_id Int
+  useranswer UserAnswer[]
+}
+
+model UserAnswer {
+  answer    Answer @relation(fields: [answer_id], references: [id])
+  answer_id Int
+  user      User @relation(fields: [user_id], references: [id])
+  user_id   String
+
+ @@id([answer_id, user_id])
+}
+
+
