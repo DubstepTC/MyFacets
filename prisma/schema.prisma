@@ -23,6 +23,8 @@ model User {
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt()
   reviews     Review[]
+  passwordLessToken String?
+  passwordLessTokenExpiresAt DateTime?
 }
 model Review {
   id          Int      @id @default(autoincrement())

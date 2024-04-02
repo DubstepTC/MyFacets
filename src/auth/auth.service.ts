@@ -6,12 +6,16 @@ import AuthServiceInterface from './interface/authService.interface';
 import { SignupParamsDto } from './dto/signup/signup.dto';
 import { SigninParamsDto } from './dto/signin/signIn.dto';
 import { PrismaService } from 'nestjs-prisma';
+import { MailService } from './mail/mail.service'
+import { PasswordLessParamsDto } from './dto/passwordless/passwordless';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService implements AuthServiceInterface {
   constructor(
     private prisma: PrismaService,
     private jwt: JwtService,
+    private mailService: MailService,
   ) { }
 
   async signup(dto: SignupParamsDto): Promise<ItemAuthDto> {
@@ -92,6 +96,41 @@ export class AuthService implements AuthServiceInterface {
     };
 
     const token = await this.jwt.signAsync(payload);
+
+    return token;
+  }
+
+  async passwordLess(dto: PasswordLessParamsDto): Promise<string> {
+    const { email } = dto;
+
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) throw new BadRequestException('User not found');
+
+    const token = randomBytes(32).toString('hex');
+
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        passwordLessToken: token,
+        passwordLessTokenExpiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // token expires in 24 hours
+      },
+    });
+
+    const resetPasswordUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}&email=${user.email}`;
+
+    const mailOptions = {
+      to: user.email,
+      from: 'myfacets@mail.ru',
+      subject: 'Reset password',
+      text: `Please click the link below to reset your password:\n\n${resetPasswordUrl}`,
+    };
+
+    await this.mailService.sendEmail(mailOptions);
 
     return token;
   }
