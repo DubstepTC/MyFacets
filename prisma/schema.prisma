@@ -39,8 +39,8 @@ model Question {
 model Answer {
   id         Int @id
   text       String
-  question   Question @relation(fields: [queston_id], references: [id])
-  queston_id Int
+  question   Question @relation(fields: [question_id], references: [id])
+  question_id Int
   useranswer UserAnswer[]
 }
 
