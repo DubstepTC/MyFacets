@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import {
     Body,
     Controller,
@@ -11,6 +12,7 @@ import {
     ParseIntPipe
   } from '@nestjs/common';
 import { QuizService } from './quiz.service';
+import { UserAnswerDTO } from 'src/auth/dto/useranswer/UserAnswer.dto';
 
 @Controller('quiz')
 
@@ -22,10 +24,8 @@ export class QuizController {
 
       return this.quizService.findOne(id);
     }
-
     @Post('question/:id')
-    postAnswer(@Param('id', ParseIntPipe) id: number, @Body() answer_id: number, ){
-    
-    
+    postAnswer(@Param('id', ParseIntPipe) id: number, @Body() dto: UserAnswerDTO){
+      this.quizService.CreateAnswer(dto)
     }
 }

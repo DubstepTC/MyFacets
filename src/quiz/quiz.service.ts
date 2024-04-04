@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { PrismaClient, Prisma } from '@prisma/client'
 import { DatabaseService } from 'src/database/database.service';
+import { UserAnswerDTO } from 'src/auth/dto/useranswer/UserAnswer.dto';
 
 @Injectable()
 export class QuizService {
@@ -17,9 +18,15 @@ export class QuizService {
         }
       })}
 
-  async CreateAnswer(answer_id: number, user_id: string)
+  async CreateAnswer(dto: UserAnswerDTO)
   {
+    const { answer_id, user_id } = dto;
     const prisma = new PrismaClient()
-    const createUser = await prisma.userAnswer.create({data: {answer_id: answer_id, user_id: user_id}})
+    await prisma.userAnswer.create({
+      data: {
+        answer_id: answer_id,
+        user_id: user_id
+      },
+    });
   }
 }
