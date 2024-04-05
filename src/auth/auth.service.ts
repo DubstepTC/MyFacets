@@ -138,23 +138,35 @@ export class AuthService implements AuthServiceInterface {
 
   async updateProfile(id: number, profileData: ItemProfileDto): Promise<any> {
     try {
-      if (profileData.phoneNumber) {
-        const phonePattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
-        if (!phonePattern.test(profileData.phoneNumber)) {
-          throw new BadRequestException('Invalid phone number format');
-        }
+      const userData: any = {}; 
+//вопрос про ФИО
+      if (profileData.firstName) {
+        userData.first_name = profileData.firstName;
       }
-
+      
+      if (profileData.middleName) {
+        userData.middle_name = profileData.middleName;
+      }
+      
+      if (profileData.lastName) {
+        userData.last_name = profileData.lastName;
+      }
+      
+      if (profileData.dateOfBirth) {
+        userData.dateOfBirth = new Date(profileData.dateOfBirth);
+      }
+      
+      if (profileData.phoneNumber) {
+        userData.phoneNumber = profileData.phoneNumber;
+      }
+      
+      if (profileData.email) {
+        userData.email = profileData.email;
+      }
+      
       const updatedProfile = await this.prisma.user.update({
-        where: { id },
-        data: {
-          first_name: profileData.firstName,
-          middle_name: profileData.middleName,
-          last_name: profileData.lastName,
-          dateOfBirth: profileData.dateOfBirth,
-          phoneNumber: profileData.phoneNumber,
-          email: profileData.email
-        },
+        where: { id: Number(id) },
+        data: userData,
       });
 
       return updatedProfile;
@@ -164,7 +176,7 @@ export class AuthService implements AuthServiceInterface {
   }
 
   async cancelProfileChanges(id: number): Promise<any> {
-    const userProfile = await this.prisma.user.findUnique({ where: { id } });
+    const userProfile = await this.prisma.user.findUnique({ where: { id: Number(id) } });
 
     if (!userProfile) {
       throw new BadRequestException('User not found');

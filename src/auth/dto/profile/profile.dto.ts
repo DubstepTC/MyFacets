@@ -1,19 +1,19 @@
-import { IsNotEmpty, IsOptional, IsString, IsDate, IsPhoneNumber, IsEmail } from "class-validator";
+import { IsOptional, IsString, IsDate, IsPhoneNumber, IsEmail, IsDateString } from "class-validator";
 
 export class ItemProfileDto {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     firstName: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     middleName: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     lastName: string;
 
-    @IsDate()
+    @IsDateString()
     @IsOptional()
     dateOfBirth: Date;
 
@@ -22,6 +22,6 @@ export class ItemProfileDto {
     phoneNumber: string;
 
     @IsEmail()
-    @IsNotEmpty()
+    @IsOptional()
     email: string;
 }
