@@ -1,6 +1,6 @@
-import { SignupParamsDto } from '../dto/signup/signup.dto';
-import { SigninParamsDto } from '../dto/signin/signIn.dto';
-import { ItemAuthDto } from '../dto/items/itemAuth.dto';
+import { SignupParamsDto } from 'src/auth/dto/signup/signup.dto';
+import { SigninParamsDto } from 'src/auth/dto/signin/signIn.dto';
+import { ItemAuthDto } from 'src/auth/dto/items/itemAuth.dto';
 
 export default interface AuthServiceInterface {
   signup(dto: SignupParamsDto): Promise<ItemAuthDto>;
