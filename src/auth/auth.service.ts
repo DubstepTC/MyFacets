@@ -8,6 +8,7 @@ import { SigninParamsDto } from './dto/signin/signIn.dto';
 import { PrismaService } from 'nestjs-prisma';
 import { MailService } from './mail/mail.service'
 import { PasswordLessParamsDto } from './dto/passwordless/passwordless';
+import { ItemProfileDto } from './dto/profile/profile.dto';
 import { randomBytes } from 'crypto';
 
 @Injectable()
@@ -134,4 +135,42 @@ export class AuthService implements AuthServiceInterface {
 
     return token;
   }
+
+  async updateProfile(id: number, profileData: ItemProfileDto): Promise<any> {
+    try {
+      if (profileData.phoneNumber) {
+        const phonePattern = /^\+7\(\d{3}\)\d{3}-\d{2}-\d{2}$/;
+        if (!phonePattern.test(profileData.phoneNumber)) {
+          throw new BadRequestException('Invalid phone number format');
+        }
+      }
+
+      const updatedProfile = await this.prisma.user.update({
+        where: { id },
+        data: {
+          first_name: profileData.firstName,
+          middle_name: profileData.middleName,
+          last_name: profileData.lastName,
+          dateOfBirth: profileData.dateOfBirth,
+          phoneNumber: profileData.phoneNumber,
+          email: profileData.email
+        },
+      });
+
+      return updatedProfile;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async cancelProfileChanges(id: number): Promise<any> {
+    const userProfile = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!userProfile) {
+      throw new BadRequestException('User not found');
+    }
+
+    return userProfile;
+  }
+
 }
