@@ -4,9 +4,9 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import AuthServiceInterface from './interface/authService.interface';
 import { SignupParamsDto } from './dto/signup/signup.dto';
-import { SigninParamsDto } from './dto/signin/signIn.dto';
+import { SigninParamsDto } from './dto/signin/signin.dto';
 import { PrismaService } from 'nestjs-prisma';
-import { MailService } from './mail/mail.service'
+import { MailService } from './mail/mail.service';
 import { PasswordLessParamsDto } from './dto/passwordless/passwordless';
 import { randomBytes } from 'crypto';
 
@@ -16,7 +16,7 @@ export class AuthService implements AuthServiceInterface {
     private prisma: PrismaService,
     private jwt: JwtService,
     private mailService: MailService,
-  ) { }
+  ) {}
 
   async signup(dto: SignupParamsDto): Promise<ItemAuthDto> {
     const { email, first_name, middle_name, last_name, password } = dto;
@@ -56,7 +56,8 @@ export class AuthService implements AuthServiceInterface {
         },
       });
 
-      if (!foundUser) throw new BadRequestException('Wrong credentials (email)');
+      if (!foundUser)
+        throw new BadRequestException('Wrong credentials (email)');
 
       const compareSuccess = await this.comparePasswords({
         password,
