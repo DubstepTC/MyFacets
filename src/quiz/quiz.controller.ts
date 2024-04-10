@@ -22,8 +22,9 @@ export class QuizController {
     @Get('question/:id')
     getQuiz(@Param('id', ParseIntPipe) id: number) {
 
-      return this.quizService.findOne(id);
+      return this.quizService.findQuestion(id);
     }
+    
     @Post('question/:id')
     postAnswer(@Param('id', ParseIntPipe) id: number, @Body() dto: UserAnswerDTO){
       this.quizService.CreateAnswer(dto)
