@@ -136,7 +136,7 @@ export class AuthService implements AuthServiceInterface {
     return token;
   }
 
-  async updateProfile(id: number, profileData: ItemProfileDto): Promise<any> {
+  async updateProfile(id: number, profileData: ItemProfileDto, imageUrl: Express.Multer.File): Promise<any> {
     try {
       const userData: any = {}; 
 //вопрос про ФИО
@@ -164,6 +164,10 @@ export class AuthService implements AuthServiceInterface {
         userData.email = profileData.email;
       }
       
+      if (imageUrl) {
+        userData.imageUrl = `../uploads/${imageUrl.filename}`;
+    }
+
       const updatedProfile = await this.prisma.user.update({
         where: { id: Number(id) },
         data: userData,

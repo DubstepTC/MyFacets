@@ -27,6 +27,7 @@ model User {
   passwordLessTokenExpiresAt DateTime?
   dateOfBirth   DateTime?
   phoneNumber   String?   @unique
+  imageUrl    String?
 }
 model Review {
   id          Int      @id @default(autoincrement())

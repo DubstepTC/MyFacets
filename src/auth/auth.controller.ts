@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, Post, Req, Res, Put, Delete, Param} from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Req, Res, Put, Delete, Param, UploadedFile, UseInterceptors} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupParamsDto } from './dto/signup/signup.dto';
 import { Response } from 'express';
@@ -7,6 +7,9 @@ import { AuthControllerDto } from './dto/authController.dto';
 import { SigninParamsDto } from './dto/signin/signIn.dto';
 import { ItemProfileDto } from './dto/profile/profile.dto';
 import { PasswordLessParamsDto } from './dto/passwordless/passwordless';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import path from 'path';
 
 @Controller({
   path: 'auth',
@@ -59,10 +62,24 @@ export class AuthController implements AuthControllerInterface {
     });
   }
 
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: '../uploads',
+      filename: (req, file, callback) => {
+        const fileName = `${Date.now()}${path.extname(file.originalname)}`;
+        callback(null, fileName);
+      },
+    }),
+  }))
+  async uploadFile(@UploadedFile() image) {
+    return { message: 'File uploaded successfully' };
+  }
+
   @Put('profile/:id')
-  async updateProfile(@Param('id') id: number, @Body() dto: ItemProfileDto, @Res() res: Response): Promise<Response<AuthControllerDto>> {
+  async updateProfile(@Param('id') id: number, @Body() dto: ItemProfileDto, @Res() res: Response, @UploadedFile() imageUrl: Express.Multer.File): Promise<Response<AuthControllerDto>> {
     try {
-      const updatedProfile = await this.authService.updateProfile(id, dto);
+      const updatedProfile = await this.authService.updateProfile(id, dto, imageUrl);
       return res.status(200).send({
         message: 'Profile updated successfully',
         data: updatedProfile,

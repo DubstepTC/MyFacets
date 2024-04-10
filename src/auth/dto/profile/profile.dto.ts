@@ -24,4 +24,8 @@ export class ItemProfileDto {
     @IsEmail()
     @IsOptional()
     email: string;
+
+    @IsString()
+    @IsOptional()
+    imageUrl: string;
 }
