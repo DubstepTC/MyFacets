@@ -4,12 +4,13 @@ import { IsDate, IsEmail, IsNotEmpty, IsString, IsStrongPassword, IsUUID, MaxLen
 export class ItemReviewDto {
   @IsString()
   @IsUUID()
+  @ApiProperty()
   @IsNotEmpty()
   id: number;
 
   // @IsString()
   // @IsNotEmpty()
-  // @ApiProperty()
+  @ApiProperty()
   // author: string;
 
   @IsNotEmpty()
@@ -22,6 +23,7 @@ export class ItemReviewDto {
   @ApiProperty()
   text: string;
 
+  @ApiProperty()
   @IsDate()
   createdAt: Date;
 }

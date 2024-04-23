@@ -9,6 +9,7 @@ import {
 
 export class CreateReviewDto {
   @IsNotEmpty()
+  @ApiProperty()
   authorId: number;
 
   @IsString()
